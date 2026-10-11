@@ -15,15 +15,17 @@ class Graph:
             match_rel_pattern = re.compile(r'(\w+)\s+(\w+)')
             match = match_rel_pattern.fullmatch(relation.strip())
 
-            if match is None:
-                raise ValueError(f"Invalid edge format: {relation!r}")
+            if match is not None:
+                parent_node, child_node = match.groups()
 
-            parent_node, child_node = match.groups()
-
-            if parent_node not in self.connections:
-                self.connections[parent_node] = [child_node]
+                if parent_node not in self.connections:
+                    self.connections[parent_node] = [child_node]
+                else:
+                    self.connections[parent_node].append(child_node)
+                
+                self.edge_count += 1
             else:
-                self.connections[parent_node].append(child_node)
+                print('Line error')
 
     def print_relation(self):
         if len(self.type) == 1:
@@ -64,7 +66,6 @@ def get_multiline_input() -> Graph:
                     print('Input not valid, should follow the convention: "[graph type] [number of edges]"')
             else:
                 r_graph.add_node(params)
-                r_graph.edge_count += 1
                 
                 if r_graph.edge_count == r_graph.max_edges:
                     print(f'There can be only {r_graph.max_edges} edges in graph!')
