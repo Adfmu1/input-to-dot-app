@@ -3,14 +3,20 @@ import re
 GRAPH_INFO_PATTERN_OBJ = re.compile(r'([a-z]+)\s+(\d+)')
 GRAPH_TYPES = ['d', 'g', 'dw', 'gw']
 
-def get_multiline_input() -> list[str]:
+class Graph:
+    def __init__(self, type: str, nodes: int):
+        self.type = type
+        self.nodes = nodes
+        self.connections = {}
+
+def get_multiline_input() -> Graph:
     print('Please insert your data, when done use [Ctrl + D] shortcut')
-    lines = []
+    first_line, r_graph = True, None
     while True:
         try:
             params = input().strip()
             
-            if len(lines) == 0:
+            if first_line:
                 if check_fst_input(params):
                     g_type, nodes = find_type_nodes(params)
 
@@ -19,15 +25,14 @@ def get_multiline_input() -> list[str]:
                     elif nodes == 0:
                         print(f'current number of nodes not valid:', nodes)
                     else:
-                        lines.append(params)
-
+                        r_graph = Graph(g_type, nodes)
                 else:
                     print('Input not valid, should follow the convention: "[graph type] [number of nodes]"')
                     
         except EOFError:
             break
     
-    return lines
+    return r_graph
 
 
 def check_fst_input(prmpt: str) -> bool:
@@ -41,5 +46,5 @@ def is_graph_type_valid(prmpt: str) -> bool:
     return prmpt in GRAPH_TYPES
 
 if __name__ == '__main__':
-    usr_data = get_multiline_input()
+    grph = get_multiline_input()
     
