@@ -26,6 +26,25 @@ class Graph:
                 self.edge_count += 1
             else:
                 print('Line error')
+                
+        else:
+            match_rel_pattern = re.compile(r'(\w+)\s+(\w+)\s+(-?\d+)')
+            match = match_rel_pattern.fullmatch(relation.strip())
+
+            if match is not None:
+                parent_node, child_node, weight = match.groups()
+
+                if parent_node not in self.connections:
+                    self.connections[parent_node] = [[child_node, weight]]
+                else:
+                    self.connections[parent_node].append([child_node, weight])
+
+                self.edge_count += 1
+                
+            else:
+                print('Line error')
+            
+
 
     def print_relation(self):
         if len(self.type) == 1:
@@ -41,6 +60,21 @@ class Graph:
                     print(f'{parent} {operator} {child};')
 
             print('}')
+
+        else:
+            if self.type == 'dw':
+                print('digraph {')
+                operator = '->'
+            else:
+                print('graph {')
+                operator = '--'
+
+            for parent, children in self.connections.items():
+                for child, weight in children:
+                    print(f'{parent} {operator} {child} [label = {weight}];')
+
+            print('}')
+            
 
 
 def get_multiline_input() -> Graph:
